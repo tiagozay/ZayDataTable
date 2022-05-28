@@ -1,4 +1,4 @@
-function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, funcoes_acoes, qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida){
+function ZayDataTable(varivel_de_referencia, tabela, classe_dos_registros, campos, campo_id ,dados, funcoes_acoes, qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida){
     this.tabela = tabela;
     this.thead;
     this.tbody;
@@ -6,6 +6,7 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
     this.nav_btns_paginacao;
     this.btn_voltar_pagina;
     this.btn_avancar_pagina;
+    this.classe_dos_registros = classe_dos_registros;
     this.dados = [];
     this.dados_divididos_em_paginas = [];
     this.campos = campos;
@@ -115,6 +116,9 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         let registros_para_escrever = this.dados_divididos_em_paginas[this.pagina_exibida]; 
     
         registros_para_escrever.forEach((objeto)=>{
+            if(!(objeto instanceof classe_dos_registros)){
+                throw new Error("Registro não corresponde à classe passada!");
+            }
             let tr = document.createElement("tr");
             tr.classList.add(class_tr_tbody);
             tr.dataset.id = objeto[campo_id];
@@ -253,9 +257,13 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         this.dados.splice(indice_registro_excluido, 1);
     }
 
-    this.atualiza_registro = function(objeto_informacoes_registro)
+    this.atualiza_registro = function(objeto_registro)
     {
-        let id = objeto_informacoes_registro[campo_id];
+        if(!(objeto_registro instanceof classe_dos_registros)){
+            throw new Error("Registro não corresponde à classe passada!");
+        }
+
+        let id = objeto_registro[campo_id];
 
         let produto_na_lista = this.busca_registro_no_array_de_dados_pelo_id(id);
 
@@ -267,8 +275,8 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
             let td = tr.querySelector(`[data-nome_campo=${campo}]`);
 
             if(campo != 'acoes'){
-                td.textContent = objeto_informacoes_registro[campo];
-                produto_na_lista[campo] = objeto_informacoes_registro[campo];
+                td.textContent = objeto_registro[campo];
+                produto_na_lista[campo] = objeto_registro[campo];
             }
             
         }
