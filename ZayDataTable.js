@@ -126,6 +126,8 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
 
                 let campo = this.campos[nome_campo];
 
+                td.dataset.nome_campo = campo;
+
                 if(campo == 'acoes'){
                     funcoes_acoes.forEach((btn)=>{
                         btn = this.adiciona_id_na_funcao_btn(btn, objeto[campo_id]);
@@ -249,6 +251,28 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         let indice_registro_excluido = this.dados.indexOf(registro_excluido);
     
         this.dados.splice(indice_registro_excluido, 1);
+    }
+
+    this.atualiza_registro = function(objeto_informacoes_registro)
+    {
+        let id = objeto_informacoes_registro[campo_id];
+
+        let produto_na_lista = this.busca_registro_no_array_de_dados_pelo_id(id);
+
+        let tr = document.querySelector(`#${varivel_de_referencia}ID-${id}`);
+
+        for(valor in this.campos){
+            let campo = this.campos[valor];
+
+            let td = tr.querySelector(`[data-nome_campo=${campo}]`);
+
+            if(campo != 'acoes'){
+                td.textContent = objeto_informacoes_registro[campo];
+                produto_na_lista[campo] = objeto_informacoes_registro[campo];
+            }
+            
+        }
+
     }
 
     this.trocar_de_pagina = function(event){
