@@ -1,9 +1,9 @@
 class ZayDataTable
 {
     
-    constructor(varivel_de_referencia, tabela, campos, campo_id ,dados, funcoes_acoes, qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida)
+    constructor(variavel_de_referencia, tabela, campos, campo_id ,dados, funcoes_acoes, qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida)
     {
-        this.varivel_de_referencia = varivel_de_referencia;
+        this.variavel_de_referencia = variavel_de_referencia;
         this.tabela = tabela;
         this.thead;
         this.tbody;
@@ -176,7 +176,7 @@ class ZayDataTable
             let tr = document.createElement("tr");
             tr.classList.add(this.classes.class_tr_tbody);
             tr.dataset.id = objeto[this.campo_id];
-            tr.id = `${this.varivel_de_referencia}ID-${objeto[this.campo_id]}`;
+            tr.id = `${this.variavel_de_referencia}ID-${objeto[this.campo_id]}`;
 
             for(let nome_campo in this.campos){
                 let td = document.createElement("td");
@@ -213,6 +213,11 @@ class ZayDataTable
         });
     }
 
+    busca_tr_por_id(id)
+    {
+        return document.querySelector(`#${this.variavel_de_referencia}ID-${id}`);
+    }
+
     limpa_lista(){
         this.dados = [];
         this.dados_divididos_em_paginas = [];
@@ -232,7 +237,7 @@ class ZayDataTable
 
         let btn_voltar = document.createElement("a");
         btn_voltar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
-        btn_voltar.dataset.varivel_de_referencia = this.varivel_de_referencia;
+        btn_voltar.dataset.variavel_de_referencia = this.variavel_de_referencia;
         btn_voltar.addEventListener("click", this.voltar_pagina);
         btn_voltar.textContent = 'Voltar';
 
@@ -246,7 +251,7 @@ class ZayDataTable
             btn.textContent = i+1;
             btn.id = `${this.classes.class_btn_numero_pagina}-${i}`;
             btn.dataset.numero_pagina = i;
-            btn.dataset.varivel_de_referencia = this.varivel_de_referencia;
+            btn.dataset.variavel_de_referencia = this.variavel_de_referencia;
             btn.addEventListener("click", this.trocar_de_pagina);
 
             this.nav_btns_paginacao.appendChild(btn);
@@ -255,7 +260,7 @@ class ZayDataTable
         let btn_avancar = document.createElement("a");
         btn_avancar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
         btn_avancar.addEventListener("click", this.avancar_pagina);
-        btn_avancar.dataset.varivel_de_referencia = this.varivel_de_referencia;
+        btn_avancar.dataset.variavel_de_referencia = this.variavel_de_referencia;
         btn_avancar.textContent = 'Avançar';
 
         this.nav_btns_paginacao.appendChild(btn_avancar);
@@ -297,7 +302,7 @@ class ZayDataTable
     remove_registro(id){
         let tempo_opacidade_ms = 500;
 
-        let tr = document.querySelector(`#${this.varivel_de_referencia}ID-${id}`);
+        let tr = this.busca_tr_por_id(id);
 
         tr.style.transition = tempo_opacidade_ms+"ms";
         tr.style.opacity = 0.0;
@@ -324,7 +329,7 @@ class ZayDataTable
 
         let produto_na_lista = this.busca_registro_no_array_de_dados_pelo_id(id);
 
-        let tr = document.querySelector(`#${this.varivel_de_referencia}ID-${id}`);
+        let tr = this.busca_tr_por_id(id);
 
         for(let valor in this.campos){
             let campo = this.campos[valor];
@@ -343,9 +348,9 @@ class ZayDataTable
     trocar_de_pagina(event){
         let numero_pagina = Number(event.target.dataset.numero_pagina);
 
-        let varivel_de_referencia = event.target.dataset.varivel_de_referencia;
+        let variavel_de_referencia = event.target.dataset.variavel_de_referencia;
 
-        let instancia_atual = eval(varivel_de_referencia);
+        let instancia_atual = eval(variavel_de_referencia);
 
         instancia_atual.pagina_exibida = numero_pagina;
 
@@ -356,9 +361,9 @@ class ZayDataTable
     avancar_pagina(event){
         let btn = event.target;
 
-        let varivel_de_referencia = event.target.dataset.varivel_de_referencia;
+        let variavel_de_referencia = event.target.dataset.variavel_de_referencia;
 
-        let instancia_atual = eval(varivel_de_referencia);
+        let instancia_atual = eval(variavel_de_referencia);
 
         if(instancia_atual.pagina_exibida +1 == instancia_atual.qtde_paginas){
             return;
@@ -374,9 +379,9 @@ class ZayDataTable
     voltar_pagina(event){
         let btn = event.target;
 
-        let varivel_de_referencia = event.target.dataset.varivel_de_referencia;
+        let variavel_de_referencia = event.target.dataset.variavel_de_referencia;
 
-        let instancia_atual = eval(varivel_de_referencia);
+        let instancia_atual = eval(variavel_de_referencia);
 
         if(instancia_atual.pagina_exibida == 0){
             btn.classList.add(this.classes.class_btn_paginacao_desativado);
