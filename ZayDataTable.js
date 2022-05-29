@@ -1,36 +1,64 @@
-function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, funcoes_acoes, qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida){
-    this.tabela = tabela;
-    this.thead;
-    this.tbody;
-    this.tfoot;
-    this.nav_btns_paginacao;
-    this.btn_voltar_pagina;
-    this.btn_avancar_pagina;
-    this.dados = [];
-    this.dados_divididos_em_paginas = [];
-    this.campos = campos;
-    if(funcoes_acoes.length > 0){
-        this.campos['Ações'] = 'acoes';
-    }
-    this.qtde_registros_por_pagina = qtde_registros_por_pagina;
-    this.qtde_paginas = 0;
-    this.pagina_exibida = 0;
- 
-    this.adiciona_dados_que_serao_escritos = function(dados){
+class ZayDataTable
+{
+    
+    constructor(varivel_de_referencia, tabela, campos, campo_id ,dados, funcoes_acoes, qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida)
+    {
+        this.varivel_de_referencia = varivel_de_referencia;
+        this.tabela = tabela;
+        this.thead;
+        this.tbody;
+        this.tfoot;
+
+        this.classes = {
+            class_tr_thead,
+            class_td_thead,
+            class_tr_tbody,
+            class_td_tbody,
+            class_mensagem_sem_registros,
+            class_nav_paginacao,
+            class_btn_voltar_e_avancar_pagina,
+            class_btn_numero_pagina,
+            class_btn_paginacao_selecionado,
+            class_btn_paginacao_desativado
+        }
+
+        this.nav_btns_paginacao;
+        this.btn_voltar_pagina;
+        this.btn_avancar_pagina;
+        this.dados = [];
+        this.dados_divididos_em_paginas = [];
+        this.campos = campos;
+        this.campo_id = campo_id;
+        if(funcoes_acoes.length > 0){
+            this.campos['Ações'] = 'acoes';
+        }
+        this.funcoes_acoes = funcoes_acoes;
+        this.qtde_registros_por_pagina = qtde_registros_por_pagina;
+        this.qtde_paginas = 0;
+        this.pagina_exibida = 0;
+        this.callback_escrita_concluida = callback_escrita_concluida;
+
+        this.gera_tfoot();
+        this.adiciona_dados_que_serao_escritos(dados);
+        this.gera_thead();
+        this.gera_tbody();
+    }   
+
+    adiciona_dados_que_serao_escritos(dados){
         this.dados = dados;
         this.dados_divididos_em_paginas = this.divide_dados_em_paginas();
     }
 
-    this.verifica_se_objeto_possui_campos_corretos = function(objeto_registro)
+    verifica_se_objeto_possui_campos_corretos(objeto_registro)
     {
         if(this.campos.length <= 0){
             return;
         }
 
         //Adiciona o campo id para verificar se corresponte também
-        this.campos['id'] = campo_id;
+        this.campos['id'] = this.campo_id;
 
-        for(nome_campo in this.campos){
+        for(let nome_campo in this.campos){
             let campo = this.campos[nome_campo];
 
             if(campo != 'acoes'){
@@ -45,15 +73,17 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         delete this.campos['id'];
     }
 
-    this.gera_thead = function(){
+    gera_thead = function(){
         let thead = document.createElement("thead");
 
         let tr_thead = document.createElement("tr");
-        tr_thead.classList.add(class_tr_thead)
-    
-        for(nome_campo in campos){
+        tr_thead.classList.add(this.classes.class_tr_thead)
+
+        let campos = this.campos;
+
+        for(let nome_campo in campos){
             let td = document.createElement("td");
-            td.classList.add(class_td_thead);
+            td.classList.add(this.classes.class_td_thead);
             td.textContent = nome_campo;
             tr_thead.appendChild(td);
         }
@@ -65,18 +95,18 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         this.thead = thead;
     }
 
-    this.gera_tbody = function(){
+    gera_tbody = function(){
         let tbody = document.createElement("tbody");
 
         this.tbody = tbody;
 
         this.escreve_registros_no_tbody();
     
-        tabela.appendChild(tbody);
+        this.tabela.appendChild(tbody);
 
     }
 
-    this.gera_tfoot = function(){
+    gera_tfoot = function(){
         let tfoot = document.createElement("tfoot");
 
         let tr = document.createElement('tr');
@@ -85,7 +115,7 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         td.setAttribute("colspan", Object.keys(this.campos).length);
 
         let nav = document.createElement("nav");
-        nav.classList.add(class_nav_paginacao);
+        nav.classList.add(this.classes.class_nav_paginacao);
         //Nav já começa aculta, só é exibida se tiver registros
         nav.style.display = 'none';
 
@@ -95,13 +125,13 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         tr.appendChild(td);
         tfoot.appendChild(tr);
 
-        tabela.appendChild(tfoot);
+        this.tabela.appendChild(tfoot);
 
         this.tfoot = tfoot;
 
     }
 
-    this.escreve_registros_no_tbody = function(){
+    escreve_registros_no_tbody = function(){
 
         this.tbody.innerHTML = "";
 
@@ -109,7 +139,7 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
             this.tbody.innerHTML = 
             `
             <tr>
-                <td colspan="${Object.keys(this.campos).length}" class="${class_mensagem_sem_registros}">
+                <td colspan="${Object.keys(this.campos).length}" class="${this.classes.class_mensagem_sem_registros}">
                     Nenhum registro foi encontrado!
                 </td>
             </tr>
@@ -125,15 +155,15 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         this.ativa_btn_pagina();
 
         if(this.pagina_exibida == 0){
-            this.btn_voltar_pagina.classList.add(class_btn_paginacao_desativado);
+            this.btn_voltar_pagina.classList.add(this.classes.class_btn_paginacao_desativado);
         }else{
-            this.btn_voltar_pagina.classList.remove(class_btn_paginacao_desativado);
+            this.btn_voltar_pagina.classList.remove(this.classes.class_btn_paginacao_desativado);
         }
 
         if(this.pagina_exibida + 1 == this.qtde_paginas){
-            this.btn_avancar_pagina.classList.add(class_btn_paginacao_desativado);
+            this.btn_avancar_pagina.classList.add(this.classes.class_btn_paginacao_desativado);
         }else{
-            this.btn_avancar_pagina.classList.remove(class_btn_paginacao_desativado);
+            this.btn_avancar_pagina.classList.remove(this.classes.class_btn_paginacao_desativado);
         }
 
         let registros_para_escrever = this.dados_divididos_em_paginas[this.pagina_exibida]; 
@@ -144,21 +174,21 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
             this.verifica_se_objeto_possui_campos_corretos(objeto);
 
             let tr = document.createElement("tr");
-            tr.classList.add(class_tr_tbody);
-            tr.dataset.id = objeto[campo_id];
-            tr.id = `${varivel_de_referencia}ID-${objeto[campo_id]}`;
+            tr.classList.add(this.classes.class_tr_tbody);
+            tr.dataset.id = objeto[this.campo_id];
+            tr.id = `${this.varivel_de_referencia}ID-${objeto[this.campo_id]}`;
 
-            for(nome_campo in this.campos){
+            for(let nome_campo in this.campos){
                 let td = document.createElement("td");
-                td.classList.add(class_td_tbody);
+                td.classList.add(this.classes.class_td_tbody);
 
                 let campo = this.campos[nome_campo];
 
                 td.dataset.nome_campo = campo;
 
                 if(campo == 'acoes'){
-                    funcoes_acoes.forEach((btn)=>{
-                        btn = this.adiciona_id_na_funcao_btn(btn, objeto[campo_id]);
+                    this.funcoes_acoes.forEach((btn)=>{
+                        btn = this.adiciona_id_na_funcao_btn(btn, objeto[this.campo_id]);
                         td.innerHTML += btn;
                     });
                 }else{
@@ -171,19 +201,19 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
             this.tbody.appendChild(tr);
         });
         
-        if(callback_escrita_concluida){
-            callback_escrita_concluida();
+        if(this.callback_escrita_concluida){
+            this.callback_escrita_concluida();
         }
 
     }
 
-    this.busca_registro_no_array_de_dados_pelo_id = function(id){
+    busca_registro_no_array_de_dados_pelo_id = function(id){
         return this.dados.find((registro)=>{
-            return registro[campo_id] == id;
+            return registro[this.campo_id] == id;
         });
     }
 
-    this.limpa_lista = function(){
+    limpa_lista(){
         this.dados = [];
         this.dados_divididos_em_paginas = [];
         this.qtde_paginas = 0;
@@ -191,17 +221,18 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         this.escreve_registros_no_tbody();
     }
 
-    this.adiciona_id_na_funcao_btn = function(string_btn, id){
+    adiciona_id_na_funcao_btn = function(string_btn, id){
         let string_dividida = string_btn.split('(');
         return `${string_dividida[0]}(${id}${string_dividida[1]}`;
     }
 
-    this.gera_botoes_paginacao = function(){
+    gera_botoes_paginacao(){
 
         this.nav_btns_paginacao.innerHTML = "";
 
         let btn_voltar = document.createElement("a");
-        btn_voltar.classList.add(class_btn_voltar_e_avancar_pagina);
+        btn_voltar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
+        btn_voltar.dataset.varivel_de_referencia = this.varivel_de_referencia;
         btn_voltar.addEventListener("click", this.voltar_pagina);
         btn_voltar.textContent = 'Voltar';
 
@@ -211,18 +242,20 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
             
         for(let i = 0; i < this.qtde_paginas; i++){
             let btn = document.createElement("a");
-            btn.classList.add(class_btn_numero_pagina);
+            btn.classList.add(this.classes.class_btn_numero_pagina);
             btn.textContent = i+1;
-            btn.id = `${class_btn_numero_pagina}-${i}`;
+            btn.id = `${this.classes.class_btn_numero_pagina}-${i}`;
             btn.dataset.numero_pagina = i;
+            btn.dataset.varivel_de_referencia = this.varivel_de_referencia;
             btn.addEventListener("click", this.trocar_de_pagina);
 
             this.nav_btns_paginacao.appendChild(btn);
         }
 
         let btn_avancar = document.createElement("a");
-        btn_avancar.classList.add(class_btn_voltar_e_avancar_pagina);
+        btn_avancar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
         btn_avancar.addEventListener("click", this.avancar_pagina);
+        btn_avancar.dataset.varivel_de_referencia = this.varivel_de_referencia;
         btn_avancar.textContent = 'Avançar';
 
         this.nav_btns_paginacao.appendChild(btn_avancar);
@@ -230,7 +263,7 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         this.btn_avancar_pagina = btn_avancar;
     }
 
-    this.divide_dados_em_paginas = function(){
+    divide_dados_em_paginas(){
 
         this.qtde_paginas = Math.ceil(this.dados.length / this.qtde_registros_por_pagina);
 
@@ -250,7 +283,7 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         return dados_divididos_em_paginas;
     }
 
-    this.atualiza_registros = function(dados){
+    atualiza_registros(dados){
 
         this.adiciona_dados_que_serao_escritos(dados);
 
@@ -261,10 +294,10 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         this.escreve_registros_no_tbody();
     }
     
-    this.remove_registro = function(id){
+    remove_registro(id){
         let tempo_opacidade_ms = 500;
 
-        let tr = document.querySelector(`#${varivel_de_referencia}ID-${id}`);
+        let tr = document.querySelector(`#${this.varivel_de_referencia}ID-${id}`);
 
         tr.style.transition = tempo_opacidade_ms+"ms";
         tr.style.opacity = 0.0;
@@ -281,19 +314,19 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         this.dados.splice(indice_registro_excluido, 1);
     }
 
-    this.atualiza_registro = function(objeto_registro)
+    atualiza_registro(objeto_registro)
     {
 
         //Lança erro se não for um objeto correto
         this.verifica_se_objeto_possui_campos_corretos(objeto_registro);
 
-        let id = objeto_registro[campo_id];
+        let id = objeto_registro[this.campo_id];
 
         let produto_na_lista = this.busca_registro_no_array_de_dados_pelo_id(id);
 
-        let tr = document.querySelector(`#${varivel_de_referencia}ID-${id}`);
+        let tr = document.querySelector(`#${this.varivel_de_referencia}ID-${id}`);
 
-        for(valor in this.campos){
+        for(let valor in this.campos){
             let campo = this.campos[valor];
 
             let td = tr.querySelector(`[data-nome_campo=${campo}]`);
@@ -307,8 +340,10 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
 
     }
 
-    this.trocar_de_pagina = function(event){
+    trocar_de_pagina(event){
         let numero_pagina = Number(event.target.dataset.numero_pagina);
+
+        let varivel_de_referencia = event.target.dataset.varivel_de_referencia;
 
         let instancia_atual = eval(varivel_de_referencia);
 
@@ -318,8 +353,10 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
 
     }
 
-    this.avancar_pagina = function(event){
+    avancar_pagina(event){
         let btn = event.target;
+
+        let varivel_de_referencia = event.target.dataset.varivel_de_referencia;
 
         let instancia_atual = eval(varivel_de_referencia);
 
@@ -334,13 +371,15 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
 
     }
 
-    this.voltar_pagina = function(event){
+    voltar_pagina(event){
         let btn = event.target;
+
+        let varivel_de_referencia = event.target.dataset.varivel_de_referencia;
 
         let instancia_atual = eval(varivel_de_referencia);
 
         if(instancia_atual.pagina_exibida == 0){
-            btn.classList.add(class_btn_paginacao_desativado);
+            btn.classList.add(this.classes.class_btn_paginacao_desativado);
             return;
         }
 
@@ -349,21 +388,16 @@ function ZayDataTable(varivel_de_referencia, tabela, campos, campo_id ,dados, fu
         instancia_atual.escreve_registros_no_tbody();
     }
 
-    this.ativa_btn_pagina = function(){
-        let btns = document.querySelectorAll("."+class_btn_numero_pagina);
+    ativa_btn_pagina(){
+        let btns = document.querySelectorAll("."+this.classes.class_btn_numero_pagina);
         btns.forEach((btn)=>{
-            btn.classList.remove(class_btn_paginacao_selecionado);
+            btn.classList.remove(this.classes.class_btn_paginacao_selecionado);
         });
 
-        let btn = document.querySelector(`#${class_btn_numero_pagina}-${this.pagina_exibida}`);
+        let btn = document.querySelector(`#${this.classes.class_btn_numero_pagina}-${this.pagina_exibida}`);
         
-        btn.classList.add(class_btn_paginacao_selecionado);
 
-    }
+        btn.classList.add(this.classes.class_btn_paginacao_selecionado);
 
-    this.gera_tfoot();
-    this.adiciona_dados_que_serao_escritos(dados);
-    this.gera_thead();
-    this.gera_tbody();
- 
+    } 
 }
