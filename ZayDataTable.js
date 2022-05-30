@@ -1,7 +1,7 @@
 class ZayDataTable
 {
     
-    constructor(variavel_de_referencia, tabela, campos, campo_id ,dados, funcoes_acoes, qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida)
+    constructor(variavel_de_referencia, tabela, campos, campo_id ,dados, lista_acoes, loader_acoes ,qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida)
     {
         this.variavel_de_referencia = variavel_de_referencia;
         this.tabela = tabela;
@@ -29,10 +29,11 @@ class ZayDataTable
         this.dados_divididos_em_paginas = [];
         this.campos = campos;
         this.campo_id = campo_id;
-        if(funcoes_acoes.length > 0){
+        if(lista_acoes.length > 0){
             this.campos['Ações'] = 'acoes';
         }
-        this.funcoes_acoes = funcoes_acoes;
+        this.lista_acoes = lista_acoes;
+        this.loader_acoes = loader_acoes;
         this.qtde_registros_por_pagina = qtde_registros_por_pagina;
         this.qtde_paginas = 0;
         this.pagina_exibida = 0;
@@ -187,10 +188,27 @@ class ZayDataTable
                 td.dataset.nome_campo = campo;
 
                 if(campo == 'acoes'){
-                    this.funcoes_acoes.forEach((btn)=>{
-                        btn = this.adiciona_id_na_funcao_btn(btn, objeto[this.campo_id]);
-                        td.innerHTML += btn;
+                    this.lista_acoes.forEach((objeto_acao)=>{
+
+                        let botao = objeto_acao.botao;
+                        let funcao = objeto_acao.funcao_click;
+
+                        botao = botao.cloneNode(true);
+
+                        botao.addEventListener("click", funcao);
+
+                        botao.dataset.id = objeto[this.campo_id];
+
+                        td.appendChild(botao);
+
                     });
+                    let novo_loader = this.loader_acoes.cloneNode(true);
+
+                    novo_loader.style.display = "none";
+
+                    novo_loader.classList.add("loader_acoes_tabela");
+
+                    td.appendChild(novo_loader);
                 }else{
                     td.textContent = objeto[campo];
                 }
@@ -343,6 +361,30 @@ class ZayDataTable
             
         }
 
+    }
+
+    ativa_loader_de_um_registro(id)
+    {
+        let tr = this.busca_tr_por_id(id);
+        let campo_acoes = tr.querySelector("[data-nome_campo=acoes]");
+        let btns = campo_acoes.querySelectorAll("button");
+        btns.forEach((btn)=>{
+            btn.style.display = 'none';
+        })
+        let loader = campo_acoes.querySelector(".loader_acoes_tabela");
+        loader.style.display = "";
+    }
+
+    desativa_loader_de_um_registro(id)
+    {
+        let tr = this.busca_tr_por_id(id);
+        let campo_acoes = tr.querySelector("[data-nome_campo=acoes]");
+        let btns = campo_acoes.querySelectorAll("button");
+        btns.forEach((btn)=>{
+            btn.style.display = '';
+        });
+        let loader = campo_acoes.querySelector(".loader_acoes_tabela");
+        loader.style.display = "none";
     }
 
     trocar_de_pagina(event){
