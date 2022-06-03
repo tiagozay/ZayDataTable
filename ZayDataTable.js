@@ -199,6 +199,8 @@ class ZayDataTable
 
                         botao.dataset.id = objeto[this.campo_id];
 
+                        botao.classList.add("btn_acoes_registros");
+
                         td.appendChild(botao);
 
                     });
@@ -367,8 +369,8 @@ class ZayDataTable
     {
         let tr = this.busca_tr_por_id(id);
         let campo_acoes = tr.querySelector("[data-nome_campo=acoes]");
-        let btns = campo_acoes.querySelectorAll("button");
-        btns.forEach((btn)=>{
+        let btns = campo_acoes.querySelectorAll(".btn_acoes_registros");
+        btns.forEach( btn => {
             btn.style.display = 'none';
         })
         let loader = campo_acoes.querySelector(".loader_acoes_tabela");
@@ -379,8 +381,8 @@ class ZayDataTable
     {
         let tr = this.busca_tr_por_id(id);
         let campo_acoes = tr.querySelector("[data-nome_campo=acoes]");
-        let btns = campo_acoes.querySelectorAll("button");
-        btns.forEach((btn)=>{
+        let btns = campo_acoes.querySelectorAll(".btn_acoes_registros");
+        btns.forEach( btn => { 
             btn.style.display = '';
         });
         let loader = campo_acoes.querySelector(".loader_acoes_tabela");
