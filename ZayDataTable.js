@@ -1,9 +1,9 @@
 class ZayDataTable
 {
     
-    constructor(variavel_de_referencia, tabela, campos, campo_id ,dados, lista_acoes, loader_acoes ,qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida)
+    constructor(nome_tabela, tabela, campos, campo_id ,dados, lista_acoes, loader_acoes ,qtde_registros_por_pagina ,class_tr_thead, class_td_thead, class_tr_tbody, class_td_tbody, class_mensagem_sem_registros , class_nav_paginacao, class_btn_voltar_e_avancar_pagina, class_btn_numero_pagina, class_btn_paginacao_selecionado, class_btn_paginacao_desativado,callback_escrita_concluida)
     {
-        this.variavel_de_referencia = variavel_de_referencia;
+        this.nome_tabela = nome_tabela;
         this.tabela = tabela;
         this.thead;
         this.tbody;
@@ -177,7 +177,7 @@ class ZayDataTable
             let tr = document.createElement("tr");
             tr.classList.add(this.classes.class_tr_tbody);
             tr.dataset.id = objeto[this.campo_id];
-            tr.id = `${this.variavel_de_referencia}ID-${objeto[this.campo_id]}`;
+            tr.id = `${this.nome_tabela}ID-${objeto[this.campo_id]}`;
 
             for(let nome_campo in this.campos){
                 let td = document.createElement("td");
@@ -235,7 +235,7 @@ class ZayDataTable
 
     busca_tr_por_id(id)
     {
-        return document.querySelector(`#${this.variavel_de_referencia}ID-${id}`);
+        return document.querySelector(`#${this.nome_tabela}ID-${id}`);
     }
 
     limpa_lista(){
@@ -257,8 +257,7 @@ class ZayDataTable
 
         let btn_voltar = document.createElement("a");
         btn_voltar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
-        btn_voltar.dataset.variavel_de_referencia = this.variavel_de_referencia;
-        btn_voltar.addEventListener("click", this.voltar_pagina);
+        btn_voltar.addEventListener("click", event => this.voltar_pagina(event));
         btn_voltar.textContent = 'Voltar';
 
         this.nav_btns_paginacao.appendChild(btn_voltar);
@@ -271,16 +270,14 @@ class ZayDataTable
             btn.textContent = i+1;
             btn.id = `${this.classes.class_btn_numero_pagina}-${i}`;
             btn.dataset.numero_pagina = i;
-            btn.dataset.variavel_de_referencia = this.variavel_de_referencia;
-            btn.addEventListener("click", this.trocar_de_pagina);
+            btn.addEventListener("click", event =>  this.trocar_de_pagina(event));
 
             this.nav_btns_paginacao.appendChild(btn);
         }
 
         let btn_avancar = document.createElement("a");
         btn_avancar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
-        btn_avancar.addEventListener("click", this.avancar_pagina);
-        btn_avancar.dataset.variavel_de_referencia = this.variavel_de_referencia;
+        btn_avancar.addEventListener("click", event =>  this.avancar_pagina(event));
         btn_avancar.textContent = 'Avançar';
 
         this.nav_btns_paginacao.appendChild(btn_avancar);
@@ -392,49 +389,33 @@ class ZayDataTable
     trocar_de_pagina(event){
         let numero_pagina = Number(event.target.dataset.numero_pagina);
 
-        let variavel_de_referencia = event.target.dataset.variavel_de_referencia;
+        this.pagina_exibida = numero_pagina;
 
-        let instancia_atual = eval(variavel_de_referencia);
-
-        instancia_atual.pagina_exibida = numero_pagina;
-
-        instancia_atual.escreve_registros_no_tbody();
+        this.escreve_registros_no_tbody();
 
     }
 
     avancar_pagina(event){
-        let btn = event.target;
 
-        let variavel_de_referencia = event.target.dataset.variavel_de_referencia;
-
-        let instancia_atual = eval(variavel_de_referencia);
-
-        if(instancia_atual.pagina_exibida +1 == instancia_atual.qtde_paginas){
+        if(this.pagina_exibida +1 == this.qtde_paginas){
             return;
         }
 
-        instancia_atual.pagina_exibida++;
+        this.pagina_exibida++;
 
-
-        instancia_atual.escreve_registros_no_tbody();
+        this.escreve_registros_no_tbody();
 
     }
 
     voltar_pagina(event){
-        let btn = event.target;
 
-        let variavel_de_referencia = event.target.dataset.variavel_de_referencia;
-
-        let instancia_atual = eval(variavel_de_referencia);
-
-        if(instancia_atual.pagina_exibida == 0){
-            btn.classList.add(this.classes.class_btn_paginacao_desativado);
+        if(this.pagina_exibida == 0){
             return;
         }
 
-        instancia_atual.pagina_exibida--;
+        this.pagina_exibida--;
 
-        instancia_atual.escreve_registros_no_tbody();
+        this.escreve_registros_no_tbody();
     }
 
     ativa_btn_pagina(){
