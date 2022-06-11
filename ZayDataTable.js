@@ -256,9 +256,9 @@ class ZayDataTable
         this.nav_btns_paginacao.innerHTML = "";
 
         let btn_voltar = document.createElement("a");
-        btn_voltar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
+        btn_voltar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina, 'material-icons');
         btn_voltar.addEventListener("click", event => this.voltar_pagina(event));
-        btn_voltar.textContent = 'Voltar';
+        btn_voltar.textContent = 'arrow_back_ios_new';
 
         this.nav_btns_paginacao.appendChild(btn_voltar);
 
@@ -276,9 +276,9 @@ class ZayDataTable
         }
 
         let btn_avancar = document.createElement("a");
-        btn_avancar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina);
+        btn_avancar.classList.add(this.classes.class_btn_voltar_e_avancar_pagina, 'material-icons');
         btn_avancar.addEventListener("click", event =>  this.avancar_pagina(event));
-        btn_avancar.textContent = 'Avançar';
+        btn_avancar.textContent = 'arrow_forward_ios';
 
         this.nav_btns_paginacao.appendChild(btn_avancar);
 
