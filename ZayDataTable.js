@@ -60,13 +60,16 @@ class ZayDataTable
         this.campos['id'] = this.campo_id;
 
         for(let nome_campo in this.campos){
+
             let campo = this.campos[nome_campo];
 
             if(campo != 'acoes'){
-                let campo_no_obj_registro = objeto_registro[campo];
+                let campo_no_obj_registro = objeto_registro.hasOwnProperty(campo);
+
                 if(!campo_no_obj_registro){
                     throw new Error("Objeto não corresponde com os que foram passados inicialmente!");
                 }
+                
             }
         }
 
