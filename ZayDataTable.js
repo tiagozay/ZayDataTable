@@ -87,7 +87,7 @@ class ZayDataTable
 
         for(let nome_campo in campos){
             let td = document.createElement("td");
-            td.classList.add(this.classes.class_td_thead);
+            td.classList.add(this.classes.class_td_thead, `${this.nome_tabela}-${this.campos[nome_campo]}`);
             td.textContent = nome_campo;
             tr_thead.appendChild(td);
         }
@@ -184,11 +184,10 @@ class ZayDataTable
 
             for(let nome_campo in this.campos){
                 let td = document.createElement("td");
-                td.classList.add(this.classes.class_td_tbody);
 
                 let campo = this.campos[nome_campo];
 
-                td.dataset.nome_campo = campo;
+                td.classList.add(this.classes.class_td_tbody, `${this.nome_tabela}-${campo}`);
 
                 if(campo == 'acoes'){
                     this.lista_acoes.forEach((objeto_acao)=>{
@@ -354,7 +353,7 @@ class ZayDataTable
         for(let valor in this.campos){
             let campo = this.campos[valor];
 
-            let td = tr.querySelector(`[data-nome_campo=${campo}]`);
+            let td = tr.querySelector(`.${this.nome_tabela}-${campo}`);
 
             if(campo != 'acoes'){
                 td.textContent = objeto_registro[campo];
@@ -368,7 +367,7 @@ class ZayDataTable
     ativa_loader_de_um_registro(id)
     {
         let tr = this.busca_tr_por_id(id);
-        let campo_acoes = tr.querySelector("[data-nome_campo=acoes]");
+        let campo_acoes = tr.querySelector(`.${this.nome_tabela}-acoes`);
         let btns = campo_acoes.querySelectorAll(".btn_acoes_registros");
         btns.forEach( btn => {
             btn.style.display = 'none';
@@ -380,7 +379,7 @@ class ZayDataTable
     desativa_loader_de_um_registro(id)
     {
         let tr = this.busca_tr_por_id(id);
-        let campo_acoes = tr.querySelector("[data-nome_campo=acoes]");
+        let campo_acoes = tr.querySelector(`.${this.nome_tabela}-acoes`);
         let btns = campo_acoes.querySelectorAll(".btn_acoes_registros");
         btns.forEach( btn => { 
             btn.style.display = '';
