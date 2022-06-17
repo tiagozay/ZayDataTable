@@ -64,7 +64,7 @@ class ZayDataTable
             let campo = this.campos[nome_campo];
 
             if(campo != 'acoes'){
-                let campo_no_obj_registro = objeto_registro.hasOwnProperty(campo);
+                let campo_no_obj_registro = campo in objeto_registro;
 
                 if(!campo_no_obj_registro){
                     throw new Error("Objeto não corresponde com os que foram passados inicialmente!");
