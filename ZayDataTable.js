@@ -235,6 +235,13 @@ class ZayDataTable
         });
     }
 
+    busca_registro_no_array_de_dados_divididos_pelo_id = function(id){
+        return this.dados_divididos_em_paginas[this.pagina_exibida].find((registro)=>{
+            return registro[this.campo_id] == id;
+        });
+    }
+
+
     busca_tr_por_id(id)
     {
         return document.querySelector(`#${this.nome_tabela}ID-${id}`);
@@ -329,13 +336,29 @@ class ZayDataTable
             tr.remove();
         }, tempo_opacidade_ms);
 
+        this.#remove_registro_do_array_de_dados(id);
+        this.#remove_registro_do_array_de_dados_divididos(id);
 
-        //Lógica para remover registro do array de dados
+    }
+
+    #remove_registro_do_array_de_dados(id)
+    {
         let registro_excluido = this.busca_registro_no_array_de_dados_pelo_id(id);
 
         let indice_registro_excluido = this.dados.indexOf(registro_excluido);
     
         this.dados.splice(indice_registro_excluido, 1);
+    }
+
+    #remove_registro_do_array_de_dados_divididos(id)
+    {
+        let array_da_pagina = this.dados_divididos_em_paginas[this.pagina_exibida];
+
+        let registro_excluido = this.busca_registro_no_array_de_dados_divididos_pelo_id(id);
+
+        let indice_registro_excluido = array_da_pagina.indexOf(registro_excluido);
+    
+        array_da_pagina.splice(indice_registro_excluido, 1);
     }
 
     atualiza_registro(objeto_registro)
