@@ -38,6 +38,7 @@ class ZayDataTable
         this.qtde_paginas = 0;
         this.pagina_exibida = 0;
         this.callback_escrita_concluida = callback_escrita_concluida;
+        this._indicador_de_primeira_vez = true;
 
         this.gera_tfoot();
         this.adiciona_dados_que_serao_escritos(dados);
@@ -67,7 +68,13 @@ class ZayDataTable
                 let campo_no_obj_registro = campo in objeto_registro;
 
                 if(!campo_no_obj_registro){
+                    
+                    if(this._indicador_de_primeira_vez){
+                        throw new Error(`O objeto ${JSON.stringify(objeto_registro)} não contém a propriedade: "${campo}"`);
+                    } 
+
                     throw new Error("Objeto não corresponde com os que foram passados inicialmente!");
+                    
                 }
                 
             }
@@ -227,6 +234,8 @@ class ZayDataTable
             this.callback_escrita_concluida();
         }
 
+        //Define o indicador para false pois nesse momento indica que a tabela já foi constuída
+        this._indicador_de_primeira_vez = false;
     }
 
     busca_registro_no_array_de_dados_pelo_id = function(id){
