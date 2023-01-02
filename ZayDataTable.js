@@ -40,6 +40,10 @@ class ZayDataTable
         this.callback_escrita_concluida = callback_escrita_concluida;
         this._indicador_de_primeira_vez = true;
 
+        //Eventos
+        this.onAdvanceOrRetreatPage = null;
+        this.onChangePage = null;
+
         this.gera_tfoot();
         this.adiciona_dados_que_serao_escritos(dados);
         this.gera_thead();
@@ -427,6 +431,10 @@ class ZayDataTable
 
         this.escreve_registros_no_tbody();
 
+        if(this.onChangePage){
+            this.onChangePage();
+        }
+
     }
 
     avancar_pagina(event){
@@ -439,6 +447,10 @@ class ZayDataTable
 
         this.escreve_registros_no_tbody();
 
+        if(this.onAdvanceOrRetreatPage){
+            this.onAdvanceOrRetreatPage();
+        }
+
     }
 
     voltar_pagina(event){
@@ -450,6 +462,10 @@ class ZayDataTable
         this.pagina_exibida--;
 
         this.escreve_registros_no_tbody();
+
+        if(this.onAdvanceOrRetreatPage){
+            this.onAdvanceOrRetreatPage();
+        }
     }
 
     ativa_btn_pagina(){
