@@ -92,6 +92,11 @@ export class ZayDataTable
         loader_acoes: HTMLElement | null,
         qtde_registros_por_pagina: number | false
     ){
+
+        if(nome_tabela.match(/\s/)){
+            throw new Error("Nome da tabela não pode ter espaços");
+        }
+
         this.nome_tabela = nome_tabela;
         this.tabela = tabela;
      

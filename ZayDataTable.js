@@ -139,6 +139,9 @@ export class ZayDataTable {
             let string_dividida = string_btn.split('(');
             return `${string_dividida[0]}(${id}${string_dividida[1]}`;
         };
+        if (nome_tabela.match(/\s/)) {
+            throw new Error("Nome da tabela não pode ter espaços");
+        }
         this.nome_tabela = nome_tabela;
         this.tabela = tabela;
         this.campos = campos;
