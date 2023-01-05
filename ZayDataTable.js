@@ -1,35 +1,20 @@
 export class AcaoRegistro {
-    constructor(_botao, _funcao) {
-        this._botao = _botao;
-        this._funcao = _funcao;
-    }
-    get botao() {
-        return this._botao;
-    }
-    get funcao_click() {
-        return this._funcao;
+    constructor(botao, funcao) {
+        this.botao = botao;
+        this.funcao = funcao;
     }
 }
 export class AcaoDiferenteParaCadaRegistro {
-    constructor(_callbackDecisora, _acoesRegistros) {
-        this._callbackDecisora = _callbackDecisora;
-        this._acoesRegistros = _acoesRegistros;
+    constructor(callbackDecisora, acoesRegistros) {
+        this.callbackDecisora = callbackDecisora;
+        this.acoesRegistros = acoesRegistros;
     }
 }
 export class CampoDosRegistros {
-    constructor(_nomeDoCampo, _campoNoObjeto, _geradorValorPersonalizado = null) {
-        this._nomeDoCampo = _nomeDoCampo;
-        this._campoNoObjeto = _campoNoObjeto;
-        this._geradorValorPersonalizado = _geradorValorPersonalizado;
-    }
-    get nomeDoCampo() {
-        return this._nomeDoCampo;
-    }
-    get campoNoObjeto() {
-        return this._campoNoObjeto;
-    }
-    get geradorValorPersonalizado() {
-        return this._geradorValorPersonalizado;
+    constructor(nomeDoCampo, campoNoObjeto, geradorValorPersonalizado = null) {
+        this.nomeDoCampo = nomeDoCampo;
+        this.campoNoObjeto = campoNoObjeto;
+        this.geradorValorPersonalizado = geradorValorPersonalizado;
     }
 }
 export class ZayDataTable {
@@ -88,11 +73,11 @@ export class ZayDataTable {
                         if (this.lista_acoes) {
                             this.lista_acoes.forEach((objeto_acao) => {
                                 if (objeto_acao instanceof AcaoDiferenteParaCadaRegistro) {
-                                    const indiceDeQualAcaoUsar = objeto_acao._callbackDecisora(objeto);
-                                    objeto_acao = objeto_acao._acoesRegistros[indiceDeQualAcaoUsar];
+                                    const indiceDeQualAcaoUsar = objeto_acao.callbackDecisora(objeto);
+                                    objeto_acao = objeto_acao.acoesRegistros[indiceDeQualAcaoUsar];
                                 }
                                 let botao = objeto_acao.botao;
-                                let funcao = objeto_acao.funcao_click;
+                                let funcao = objeto_acao.funcao;
                                 const novo_botao = botao.cloneNode(true);
                                 novo_botao.addEventListener("click", funcao);
                                 novo_botao.dataset.id = objeto[this.campo_id];

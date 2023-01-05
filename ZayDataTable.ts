@@ -1,27 +1,16 @@
 export class AcaoRegistro
 {
     constructor(
-        private _botao: HTMLElement, 
-        private _funcao: EventListenerOrEventListenerObject
+        public botao: HTMLElement, 
+        public funcao: EventListenerOrEventListenerObject
     ){}    
-
-    get botao()
-    {
-        return this._botao;
-    }
-
-    get funcao_click(): EventListenerOrEventListenerObject
-    {
-        return this._funcao;
-    }
-
 }
 
 export class AcaoDiferenteParaCadaRegistro
 {
     constructor(
-        public _callbackDecisora: Function, 
-        public _acoesRegistros: Array<AcaoRegistro>
+        public callbackDecisora: (registro: object) => number, 
+        public acoesRegistros: Array<AcaoRegistro>
     ){}
 }
 
@@ -29,25 +18,10 @@ export class AcaoDiferenteParaCadaRegistro
 export class CampoDosRegistros
 {
     constructor(
-        private _nomeDoCampo: string,
-        private _campoNoObjeto: string,
-        private _geradorValorPersonalizado: ((value: string) => string) | null = null
+        public nomeDoCampo: string,
+        public campoNoObjeto: string,
+        public geradorValorPersonalizado: ((value: string) => string) | null = null
     ){}
-
-    get nomeDoCampo(): string
-    {
-        return this._nomeDoCampo;
-    }
-
-    get campoNoObjeto(): string
-    {
-        return this._campoNoObjeto;
-    }
-
-    get geradorValorPersonalizado(): ((value: string) => string) | null
-    {
-        return this._geradorValorPersonalizado;
-    }
 }
 
 export class ZayDataTable
@@ -314,13 +288,13 @@ export class ZayDataTable
                         this.lista_acoes.forEach((objeto_acao)=>{
 
                             if(objeto_acao instanceof AcaoDiferenteParaCadaRegistro){
-                                const indiceDeQualAcaoUsar = objeto_acao._callbackDecisora(objeto);
+                                const indiceDeQualAcaoUsar = objeto_acao.callbackDecisora(objeto);
     
-                                objeto_acao = objeto_acao._acoesRegistros[indiceDeQualAcaoUsar];
+                                objeto_acao = objeto_acao.acoesRegistros[indiceDeQualAcaoUsar];
                             }
     
                             let botao = objeto_acao.botao as HTMLElement;
-                            let funcao = objeto_acao.funcao_click;
+                            let funcao = objeto_acao.funcao;
     
                             const novo_botao = botao.cloneNode(true) as HTMLElement;
     
@@ -647,4 +621,3 @@ export class ZayDataTable
 
     } 
 }
-
